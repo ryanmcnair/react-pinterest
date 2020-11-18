@@ -44,7 +44,6 @@ export default class SingleBoard extends React.Component {
 
   render() {
     const { pins, board } = this.state;
-    console.warn(this.state);
     const renderPins = () => (
       // 4. map over the pins in state
       pins.map((pin) => (
