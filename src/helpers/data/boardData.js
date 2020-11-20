@@ -26,9 +26,20 @@ const updateBoard = (object) => new Promise((resolve, reject) => {
     .then(resolve).catch((error) => reject(error));
 });
 
+const deleteBoard = (boardId) => axios.delete(`${baseUrl}/boards/${boardId}.json`);
+
+const searchBoards = (uid, term) => new Promise((resolve, reject) => {
+  getAllUserBoards(uid).then((response) => {
+    const searchResults = response.filter((r) => r.name.toLowerCase().includes(term) || r.description.toLowerCase().includes(term));
+    resolve(searchResults);
+  }).catch((error) => reject(error));
+});
+
 export {
   getAllUserBoards,
   getSingleBoard,
   createBoard,
   updateBoard,
+  deleteBoard,
+  searchBoards,
 };

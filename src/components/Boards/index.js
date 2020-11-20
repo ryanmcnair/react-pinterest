@@ -61,7 +61,7 @@ export default class SingleBoard extends React.Component {
     // 3. Render the pins on the DOM
     return (
       <div>
-        <AppModal title={'Edit Board'} btnColor={'warning'} icon={'fa-pen-nib'} className='align-right'>
+        <AppModal buttonLabel={'Update'} title={'Edit Board'} btnColor={'warning'} icon={'fa-pen-nib'} className='align-right'>
           <BoardForm board={board} onUpdate={this.getBoardInfo} />
         </AppModal>
         <PageHeader user={user} />
