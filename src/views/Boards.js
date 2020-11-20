@@ -1,5 +1,5 @@
 import React from 'react';
-import { getAllUserBoards } from '../helpers/data/boardData';
+import { getAllUserBoards, deleteBoard } from '../helpers/data/boardData';
 import BoardsCard from '../components/Cards/BoardsCards';
 import Loader from '../components/Loader';
 import getUid from '../helpers/data/authData';
@@ -10,7 +10,6 @@ import PageHeader from '../components/PageHeader';
 export default class Boards extends React.Component {
   state = {
     boards: [],
-    loading: true,
   }
 
   componentDidMount() {
@@ -26,10 +25,12 @@ export default class Boards extends React.Component {
     });
   }
 
-  setLoading = () => {
-    this.timer = setInterval(() => {
-      this.setState({ loading: false });
-    }, 1000);
+  removeBoard = (e) => {
+    const removedBoard = this.state.boards.filter((board) => board.id !== e.target.id);
+    this.setState({
+      boards: removedBoard,
+    });
+    deleteBoard(e.target.id).then(() => this.getBoards());
   }
 
   componentWillUnmount() {
@@ -40,7 +41,7 @@ export default class Boards extends React.Component {
     const { boards, loading } = this.state;
     const { user } = this.props;
     const showBoards = () => (
-      boards.map((board) => <BoardsCard key={board.firebaseKey} board={board} />)
+      boards.map((board) => <BoardsCard key={board.firebaseKey} board={board} removeBoard={this.removeBoard} />)
     );
     return (
       <>
@@ -48,7 +49,7 @@ export default class Boards extends React.Component {
           <Loader />
         ) : (
           <>
-          <AppModal title={'Add Board'} btnColor={'danger'} icon={'fa-plus-circle'} className='align-right'>
+          <AppModal buttonLabel={'Add Board'}title={'Add Board'} btnColor={'danger'} icon={'fa-plus-circle'} className='align-right'>
             <BoardForm onUpdate={this.getBoards} />
           </AppModal>
           <PageHeader user={user} />

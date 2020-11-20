@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import getUid from '../helpers/data/authData';
+import { searchBoards } from '../helpers/data/boardData';
+import { searchPins } from '../helpers/data/pinData';
 import BoardsCard from '../components/Cards/BoardsCards';
 import PinsCard from '../components/Cards/PinsCard';
 
@@ -14,28 +17,33 @@ export default class SearchResults extends Component {
   }
 
   performSearch = () => {
-    const searchTerm = this.props.match.params.term;
     const searchType = this.props.match.params.type;
-
+    const searchTerm = this.props.match.params.term.toLowerCase();
+    const userId = getUid();
     if (searchType === 'boards') {
-      // Make an API call that gets the boards with the search term .filter
-      this.setState({
-        // results
-        searchTerm,
-        searchType,
-      });
+      this.getResults = searchBoards(userId, searchTerm)
+        .then((results) => {
+          this.setState({
+            results,
+            searchTerm,
+            searchType,
+          });
+        });
     } else {
-      // Make an API call that gets the pins with the search term .filter
-      this.setState({
-        // results
-        searchTerm,
-        searchType,
+      searchPins(userId, searchTerm).then((results) => {
+        this.setState({
+          results,
+          searchTerm,
+          searchType,
+        });
       });
     }
   }
 
+  // allow searches to take place when the search results component is already mounted and it rerenders based on the changes identified in this function
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.searchTerm !== this.props.match.params.term) {
+    // only update/rerender component if the params have changed
+    if (prevState.searchTerm !== this.props.match.params.term.toLowerCase() || prevState.searchType !== this.props.match.params.type) {
       this.performSearch();
     }
   }
@@ -43,15 +51,18 @@ export default class SearchResults extends Component {
   render() {
     const { results, searchType } = this.state;
     const showResults = () => (
-      results.map((result) => (
-        searchType === 'boards' ? <BoardsCard key={results.firebaseKey} board={result} /> : <PinsCard key={results.firebaseKey} pin={result}/>
-      ))
+      results.length
+        ? results.map((result) => (
+          searchType === 'boards' ? <BoardsCard key={result.firebaseKey} board={result} /> : <PinsCard key={result.firebaseKey} pin={result} />
+        )) : (
+          'No Results'
+        )
     );
-
     return (
       <div>
-        <h1>Search Results</h1>
-        {showResults()}
+        <h1 className='mt-5'>Search Results</h1>
+        <div className='d-flex flex-wrap justify-content-center container'>
+          {showResults()}</div>
       </div>
     );
   }
