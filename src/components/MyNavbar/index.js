@@ -52,7 +52,7 @@ export default function MyNavbar(props) {
           {user && (
             <>
               <img
-                className='userInfo'
+                className='userInfo rounded-circle'
                 src={user?.photoURL}
                 alt={user?.displayName}
               />

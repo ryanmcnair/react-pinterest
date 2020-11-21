@@ -1,55 +1,25 @@
 import React from 'react';
 import Auth from '../components/Auth';
 import Loader from '../components/Loader';
-import { getAllPins } from '../helpers/data/pinData';
-import getUid from '../helpers/data/authData';
-import PinsCard from '../components/Cards/PinsCard';
+import HomeComponent from '../components/Home';
 
-export default class Home extends React.Component {
-  state = {
-    pins: [],
-    loading: true,
-  }
-
-  componentDidMount() {
-    this.getPins();
-  }
-
-  getPins = () => {
-    const userId = getUid();
-    getAllPins(userId)
-      .then((pins) => {
-        this.setState({
-          pins,
-          loading: false,
-        });
-      });
-  }
-
-  loadComponent = () => {
-    const { user } = this.props;
+export default function Home({ user }) {
+  const loadComponent = () => {
     let component = '';
     if (user === null) {
       component = <Loader />;
     } else if (user) {
-      component = this.state.pins.length
-      && this.state.pins.map((pin) => (
-        <PinsCard key={pin.firebaseKey} pin={pin} />
-      ));
+      component = <HomeComponent />;
     } else {
       component = <Auth />;
     }
     return component;
   };
 
-  render() {
-    return (
-      <div>
-        <h1 className='mt-5'>Pins you may like</h1>
-        <div className='d-flex flex-wrap container justify-content-center'>
-        {!this.state.loading && this.loadComponent()}
-        </div>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h1>Welcome to React-Pinterest</h1>
+      {loadComponent()}
+    </div>
+  );
 }

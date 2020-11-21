@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import Home from '../views/Home';
 import Boards from '../views/Boards';
 import PinDetails from '../views/PinDetails';
@@ -42,12 +42,21 @@ export default function Routes({ user }) {
           path='/search/:term/:type'
           component={(props) => <SearchResults {...props} />}
         />
-        <Route
+        <PrivateRoute
           exact
           path='/boards'
-          component={() => <Boards user={user} />}
+          component={Boards}
+          user={user}
         />
         <Route component={NotFound} />
       </Switch>
   );
 }
+
+const PrivateRoute = ({ component: Component, user, ...rest }) => {
+  const routeChecker = (taco) => (user
+    ? (<Component {...taco} user={user}/>)
+    : (<Redirect to={{ pathname: '/', state: { from: taco.location } }} />));
+
+  return <Route {...rest} render={(props) => routeChecker(props)}/>;
+};

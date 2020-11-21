@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import getUid from '../helpers/data/authData';
-import { searchBoards } from '../helpers/data/boardData';
-import { searchPins } from '../helpers/data/pinData';
+import boardData from '../helpers/data/boardData';
+import pinData from '../helpers/data/pinData';
 import BoardsCard from '../components/Cards/BoardsCards';
 import PinsCard from '../components/Cards/PinsCard';
 
@@ -21,7 +21,7 @@ export default class SearchResults extends Component {
     const searchTerm = this.props.match.params.term.toLowerCase();
     const userId = getUid();
     if (searchType === 'boards') {
-      this.getResults = searchBoards(userId, searchTerm)
+      this.getResults = boardData.searchBoards(userId, searchTerm)
         .then((results) => {
           this.setState({
             results,
@@ -30,7 +30,7 @@ export default class SearchResults extends Component {
           });
         });
     } else {
-      searchPins(userId, searchTerm).then((results) => {
+      pinData.searchPins(userId, searchTerm).then((results) => {
         this.setState({
           results,
           searchTerm,

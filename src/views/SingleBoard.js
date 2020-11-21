@@ -1,6 +1,6 @@
 import React from 'react';
-import { getBoardPins, getPin } from '../helpers/data/pinData';
-import { getSingleBoard } from '../helpers/data/boardData';
+import pinData from '../helpers/data/pinData';
+import boardData from '../helpers/data/boardData';
 import PinsCard from '../components/Cards/PinsCard';
 import BoardForm from '../components/Forms/BoardForm';
 import AppModal from '../components/AppModal';
@@ -15,7 +15,7 @@ export default class SingleBoard extends React.Component {
     // 1. Pull boardId from URL params
     const boardId = this.props.match.params.id;
     // 2. Make a call to the API that gets the board info
-    getSingleBoard(boardId).then((response) => {
+    boardData.getSingleBoard(boardId).then((response) => {
       this.setState({
         board: response,
       });
@@ -30,12 +30,12 @@ export default class SingleBoard extends React.Component {
   }
 
   getPins = (boardId) => (
-    getBoardPins(boardId).then((response) => {
+    pinData.getBoardPins(boardId).then((response) => {
       // an array that holds all of the calls to get the pin information
       const pinArray = [];
       response.forEach((item) => {
         // pushing a function that returns a promise into the pinArray
-        pinArray.push(getPin(item.pinId));
+        pinArray.push(pinData.getPin(item.pinId));
       });
       // returning an array of all the fullfilled promises
       return Promise.all([...pinArray]);

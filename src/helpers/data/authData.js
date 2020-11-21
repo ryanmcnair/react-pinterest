@@ -3,4 +3,5 @@ import 'firebase/auth';
 
 const getUid = () => firebase.auth().currentUser?.uid;
 
-export default getUid;
+// eslint-disable-next-line import/no-anonymous-default-export
+export default { getUid };
