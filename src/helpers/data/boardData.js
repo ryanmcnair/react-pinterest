@@ -28,18 +28,22 @@ const updateBoard = (object) => new Promise((resolve, reject) => {
 
 const deleteBoard = (boardId) => axios.delete(`${baseUrl}/boards/${boardId}.json`);
 
-const searchBoards = (uid, term) => new Promise((resolve, reject) => {
+const deletePinBoard = (firebaseKey) => axios.delete(`${baseUrl}/pin-boards/${firebaseKey}.json`);
+
+const searchBoards = (uid, searchTerm) => new Promise((resolve, reject) => {
   getAllUserBoards(uid).then((response) => {
-    const searchResults = response.filter((r) => r.name.toLowerCase().includes(term) || r.description.toLowerCase().includes(term));
+    const searchResults = response.filter((res) => res.name.toLowerCase().includes(searchTerm) || res.description.toLowerCase().includes(searchTerm));
     resolve(searchResults);
   }).catch((error) => reject(error));
 });
 
-export {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default {
   getAllUserBoards,
   getSingleBoard,
   createBoard,
   updateBoard,
   deleteBoard,
+  deletePinBoard,
   searchBoards,
 };

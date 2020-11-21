@@ -1,6 +1,6 @@
 import React from 'react';
-import { getBoardPins, getPin } from '../../helpers/data/pinData';
-import { getSingleBoard } from '../../helpers/data/boardData';
+import pinData from '../../helpers/data/pinData';
+import boardData from '../../helpers/data/boardData';
 import PinsCard from '../Cards/PinsCard';
 import PageHeader from '../PageHeader';
 import AppModal from '../Modal';
@@ -13,20 +13,16 @@ export default class SingleBoard extends React.Component {
   };
 
   componentDidMount() {
-    // 0. Make a call to the API that gets the board info
     const boardId = this.props.match.params.id;
     this.getBoardInfo(boardId);
-
-    // 1. Make a call to the API that returns the pins associated with this board and set to state.
     this.getPins(boardId)
-      // because we did a promise.all, the response will not resolve until all the promises are completed
       .then((resp) => (
         this.setState({ pins: resp })
       ));
   }
 
   getBoardInfo = (boardId) => {
-    getSingleBoard(boardId).then((response) => {
+    boardData.getSingleBoard(boardId).then((response) => {
       this.setState({
         board: response,
       });
@@ -34,12 +30,11 @@ export default class SingleBoard extends React.Component {
   }
 
   getPins = (boardId) => (
-    getBoardPins(boardId).then((response) => {
-      // an array that holds all of the calls to get the pin information
+    pinData.getBoardPins(boardId).then((response) => {
       const pinArray = [];
       response.forEach((item) => {
         // pushing a function that returns a promise into the pinArray
-        pinArray.push(getPin(item.pinId));
+        pinArray.push(pinData.getPin(item.pinId));
       });
       // returning an array of all the fullfilled promises
       return Promise.all([...pinArray]);

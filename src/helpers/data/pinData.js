@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = 'https://fir-cows-958ae.firebaseio.com/pinterest-webpack';
+const baseUrl = 'https://pinterest-react-cd8c1.firebaseio.com';
 
 const getBoardPins = (boardId) => new Promise((resolve, reject) => {
   axios.get(`${baseUrl}/pins-boards.json?orderBy="boardId"&equalTo="${boardId}"`).then((response) => {
@@ -20,11 +20,9 @@ const getAllUserPins = (userId) => new Promise((resolve, reject) => {
   }).catch((error) => reject(error));
 });
 
-const getAllPins = (userId) => new Promise((resolve, reject) => {
+const getAllPins = () => new Promise((resolve, reject) => {
   axios.get(`${baseUrl}/pins.json`).then((response) => {
-    // Need to make sure that the pin either belongs to the user or is not private.
-    const filteredArray = Object.values(response.data).filter((r) => r.userId === userId || r.private === false);
-    resolve(filteredArray);
+    resolve(Object.values(response.data));
   }).catch((error) => reject(error));
 });
 
@@ -35,6 +33,20 @@ const searchPins = (userId, term) => new Promise((resolve, reject) => {
   }).catch((error) => reject(error));
 });
 
-export {
-  getBoardPins, getPin, getAllUserPins, searchPins, getAllPins,
+const createPin = (data) => new Promise((resolve, reject) => {
+  axios.post(`${baseUrl}/pins.json`, data)
+    .then((response) => {
+      const update = { firebaseKey: response.data.name };
+      axios.patch(`${baseUrl}/pins/${response.data.name}.json`, update)
+        .then(() => {
+          resolve(response);
+        });
+    }).catch((error) => reject(error));
+});
+
+const deletePin = (pinId) => axios.delete(`${baseUrl}/pins/${pinId}.json`);
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default {
+  getBoardPins, getPin, getAllUserPins, searchPins, getAllPins, createPin, deletePin,
 };
