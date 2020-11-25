@@ -3,6 +3,7 @@ import firebase from 'firebase/app';
 import 'firebase/storage';
 import getUser from '../../helpers/data/authData';
 import pinData from '../../helpers/data/pinData';
+import BoardSelect from '../BoardSelect';
 
 class PinForm extends Component {
     state = {
@@ -11,6 +12,7 @@ class PinForm extends Component {
       imageUrl: this.props.pin?.imageUrl || '',
       userId: this.props.pin?.userId || '',
       description: this.props.pin?.description || '',
+      boardId: this.props.pin?.boardId || '',
       private: false,
     }
 
@@ -44,18 +46,31 @@ class PinForm extends Component {
         });
       }
 
+      populatePinId = (pinId) => {
+        this.setState({
+          firebaseKey: pinId,
+        });
+      }
+
       handleSubmit = (e) => {
         e.preventDefault();
 
         if (this.state.firebaseKey === '') {
           pinData.createPin(this.state)
-            .then(() => {
+            .then((response) => {
               this.props.onUpdate();
+              this.populatePinId(response.data.name);
+            }).then(() => {
+              this.state.boardId !== ''
+                  && pinData.createBoardPin({ pinId: this.state.firebaseKey, userId: this.state.userId, boardId: this.state.boardId });
             });
         } else {
           pinData.updatePin(this.state)
             .then(() => {
               this.props.onUpdate(this.props.pin.firebaseKey);
+            }).then(() => {
+              this.state.boardId !== ''
+                  && pinData.createBoardPin({ pinId: this.state.firebaseKey, userId: this.state.userId, boardId: this.state.boardId });
             });
         }
       }
@@ -103,6 +118,7 @@ class PinForm extends Component {
                 onChange={this.makePrivate}
                 />
                 <label className="form-check-label" for="exampleCheck1">Make Private</label>
+                <BoardSelect onChange={this.handleChange}/>
                 <button>Submit</button>
           </form>
         );
