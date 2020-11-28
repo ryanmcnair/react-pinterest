@@ -23,18 +23,18 @@ class PinDetails extends Component {
      }
 
      removePin = () => {
-       pinData.getAllBoardPins()
-         .then((response) => {
-           response.forEach((pinBoard) => {
-             pinBoard.pinId === this.state.pin.firebaseKey
-           && pinData.deleteBoardPins(pinBoard.firebaseKey)
-             .then(() => {
-               pinData.deletePin(this.state.pin.firebaseKey)
-                 .then(() => {
-                   this.props.history.goBack();
-                 });
+       if (this.state.pin.boardId !== '') {
+         pinData.getAllBoardPins()
+           .then((response) => {
+             response.forEach((pinBoard) => {
+               pinBoard.pinId === this.state.pin.firebaseKey
+           && (pinData.deleteBoardPins(pinBoard.firebaseKey));
              });
            });
+       }
+       pinData.deletePin(this.state.pin.firebaseKey)
+         .then(() => {
+           this.props.history.goBack();
          });
      }
 

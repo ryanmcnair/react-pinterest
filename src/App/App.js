@@ -5,10 +5,6 @@ import fbConnection from '../helpers/data/connection';
 import MyNavbar from '../components/MyNavbar';
 import Routes from '../helpers/Routes';
 
-// import { patchFBBoardkeys, patchFBPinkeys } from '../helpers/data/patchFBkeys';
-
-// patchFBBoardkeys();
-// patchFBPinkeys();
 fbConnection();
 
 class App extends React.Component {
@@ -35,7 +31,7 @@ class App extends React.Component {
     return (
       <div className='App'>
         <Router>
-          <MyNavbar user={user}/>
+          <MyNavbar user={user} />
           <Routes user={user} />
         </Router>
       </div>

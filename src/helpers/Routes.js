@@ -25,7 +25,7 @@ export default function Routes({ user }) {
         <Route
           exact
           path='/pins/:id'
-          component={() => <PinDetails user={user} />}
+          component={(props) => <PinDetails user={user} {...props} />}
         />
         <Route
           exact

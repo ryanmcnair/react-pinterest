@@ -14,36 +14,36 @@ const getSingleBoard = (boardId) => new Promise((resolve, reject) => {
   }).catch((error) => reject(error));
 });
 
-const createBoard = (object) => new Promise((resolve, reject) => {
-  axios.post(`${baseUrl}/boards.json`, object)
+const createBoard = (data) => new Promise((resolve, reject) => {
+  axios.post(`${baseUrl}/boards.json`, data)
     .then((response) => {
-      axios.patch(`${baseUrl}/boards/${response.data.name}.json`, { firebaseKey: response.data.name }).then(resolve);
+      const update = { firebaseKey: response.data.name };
+      axios.patch(`${baseUrl}/boards/${response.data.name}.json`, update)
+        .then(() => {
+          resolve(response);
+        });
     }).catch((error) => reject(error));
 });
 
-const updateBoard = (object) => new Promise((resolve, reject) => {
-  axios.patch(`${baseUrl}/boards/${object.firebaseKey}.json`, object)
-    .then(resolve).catch((error) => reject(error));
+const updateBoard = (data) => new Promise((resolve, reject) => {
+  axios.patch(`${baseUrl}/boards/${data.firebaseKey}.json`, data)
+    .then(resolve)
+    .catch((error) => reject(error));
+});
+
+const searchBoards = (userId, searchTerm) => new Promise((resolve, reject) => {
+  getAllUserBoards(userId)
+    .then((response) => {
+      const searched = response.filter((board) => board.name.toLowerCase().includes(searchTerm));
+      resolve(searched);
+    }).catch((error) => reject(error));
 });
 
 const deleteBoard = (boardId) => axios.delete(`${baseUrl}/boards/${boardId}.json`);
 
 const deletePinBoard = (firebaseKey) => axios.delete(`${baseUrl}/pin-boards/${firebaseKey}.json`);
 
-const searchBoards = (uid, searchTerm) => new Promise((resolve, reject) => {
-  getAllUserBoards(uid).then((response) => {
-    const searchResults = response.filter((res) => res.name.toLowerCase().includes(searchTerm) || res.description.toLowerCase().includes(searchTerm));
-    resolve(searchResults);
-  }).catch((error) => reject(error));
-});
-
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
-  getAllUserBoards,
-  getSingleBoard,
-  createBoard,
-  updateBoard,
-  deleteBoard,
-  deletePinBoard,
-  searchBoards,
+  getAllUserBoards, getSingleBoard, createBoard, updateBoard, deleteBoard, deletePinBoard, searchBoards,
 };
