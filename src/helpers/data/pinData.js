@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const baseUrl = 'https://pinterest-react-cd8c1.firebaseio.com';
+const baseUrl = 'https://pinterest-react-cd8c1.firebaseio.com/';
 
 const getBoardPins = (boardId) => new Promise((resolve, reject) => {
-  axios.get(`${baseUrl}/pins-boards.json?orderBy="boardId"&equalTo="${boardId}"`).then((response) => {
+  axios.get(`${baseUrl}/pin-boards.json?orderBy="boardId"&equalTo="${boardId}"`).then((response) => {
     resolve(Object.values(response.data));
   }).catch((error) => reject(error));
 });
@@ -20,22 +20,9 @@ const getPin = (pinId) => new Promise((resolve, reject) => {
   }).catch((error) => reject(error));
 });
 
-const getAllUserPins = (userId) => new Promise((resolve, reject) => {
-  axios.get(`${baseUrl}/pins.json?orderBy="userId"&equalTo="${userId}"`).then((response) => {
-    resolve(Object.values(response.data));
-  }).catch((error) => reject(error));
-});
-
 const getAllPins = () => new Promise((resolve, reject) => {
   axios.get(`${baseUrl}/pins.json`).then((response) => {
     resolve(Object.values(response.data));
-  }).catch((error) => reject(error));
-});
-
-const searchPins = (userId, term) => new Promise((resolve, reject) => {
-  getAllPins(userId).then((response) => {
-    const searchResults = response.filter((r) => r.name.toLowerCase().includes(term) || r.description.toLowerCase().includes(term));
-    resolve(searchResults);
   }).catch((error) => reject(error));
 });
 
@@ -50,7 +37,11 @@ const createPin = (data) => new Promise((resolve, reject) => {
     }).catch((error) => reject(error));
 });
 
-const deletePin = (pinId) => axios.delete(`${baseUrl}/pins/${pinId}.json`);
+const updatePin = (data) => new Promise((resolve, reject) => {
+  axios.patch(`${baseUrl}/pins/${data.firebaseKey}.json`, data)
+    .then(resolve)
+    .catch((error) => reject(error));
+});
 
 const createBoardPin = (data) => new Promise((resolve, reject) => {
   axios.post(`${baseUrl}/pin-boards.json`, data)
@@ -62,9 +53,19 @@ const createBoardPin = (data) => new Promise((resolve, reject) => {
     }).catch((error) => reject(error));
 });
 
+const searchPins = (searchTerm) => new Promise((resolve, reject) => {
+  getAllPins()
+    .then((response) => {
+      const searched = response.filter((pin) => pin.name.toLowerCase().includes(searchTerm));
+      resolve(searched);
+    }).catch((error) => reject(error));
+});
+
+const deletePin = (pinId) => axios.delete(`${baseUrl}/pins/${pinId}.json`);
+
 const deleteBoardPins = (fbKey) => axios.delete(`${baseUrl}/pin-boards/${fbKey}.json`);
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
-  getBoardPins, getPin, getAllUserPins, searchPins, getAllPins, createPin, deletePin, createBoardPin, deleteBoardPins, getAllBoardPins,
+  getPin, getBoardPins, getAllPins, createPin, deletePin, updatePin, createBoardPin, deleteBoardPins, getAllBoardPins, searchPins,
 };

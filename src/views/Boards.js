@@ -35,14 +35,12 @@ export default class Boards extends React.Component {
     pinData.getBoardPins(e.target.id)
       .then((response) => {
         response.forEach((boardPin) => {
-          pinData.deleteBoardPins(boardPin.firebaseKey)
-            .then(() => {
-              boardData.deleteBoard(e.target.id)
-                .then(() => {
-                  this.getBoards();
-                });
-            });
+          pinData.deleteBoardPins(boardPin.firebaseKey);
         });
+      });
+    boardData.deleteBoard(e.target.id)
+      .then(() => {
+        this.getBoards();
       });
   }
 
@@ -70,7 +68,7 @@ export default class Boards extends React.Component {
           <AppModal title={'Create Board'} buttonLabel={'Create Board'}>
           <BoardForm onUpdate={this.getBoards} />
             </AppModal>
-          <h2>Here are all of your boards</h2>
+          <h2>Boards</h2>
           <div className='d-flex flex-wrap container'>{showBoards()}</div>
           </>
         )}

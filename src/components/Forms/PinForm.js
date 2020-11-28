@@ -69,8 +69,14 @@ class PinForm extends Component {
             .then(() => {
               this.props.onUpdate(this.props.pin.firebaseKey);
             }).then(() => {
-              this.state.boardId !== ''
-                  && pinData.createBoardPin({ pinId: this.state.firebaseKey, userId: this.state.userId, boardId: this.state.boardId });
+              if (this.state.boardId !== '') {
+                pinData.getBoardPins(this.state.boardId)
+                  .then((response) => {
+                    const preventDupes = response.filter((name) => name.pinId === this.state.firebaseKey);
+                    preventDupes === []
+                    && pinData.createBoardPin({ pinId: this.state.firebaseKey, userId: this.state.userId, boardId: this.state.boardId });
+                  });
+              }
             });
         }
       }

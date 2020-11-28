@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export default function PinsCard({ pin, removePin }) {
+export default function PinsCard({ pin }) {
   return (
     <div className='card m-2'>
       <img className='card-img-top' src={pin.imageUrl} alt='Card cap' />
@@ -10,10 +10,9 @@ export default function PinsCard({ pin, removePin }) {
         <p className='card-text'>
           {pin.description}
         </p>
-        <Link className='btn btn-primary' to={`/pin-edit/${pin.firebaseKey}`}>
-          Edit Pin
+        <Link className='btn btn-primary' to={`/pins/${pin.firebaseKey}`}>
+          Pin Details
         </Link>
-        <button className='btn btn-danger' id={pin.firebaseKey} onClick={(e) => removePin(e)}>Delete</button>
       </div>
     </div>
   );
